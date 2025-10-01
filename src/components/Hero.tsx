@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Smile, Users, ThumbsUp } from "lucide-react";
 import heroImage from "@/assets/hero-perfumes.jpg";
+import { toast } from "sonner";
 
 const Hero = () => {
   return (
@@ -24,10 +25,18 @@ const Hero = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-inter text-base px-8">
+              <Button 
+                size="lg" 
+                className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-inter text-base px-8"
+                onClick={() => toast.info("Navigating to Women's Collection")}
+              >
                 SHOP WOMEN
               </Button>
-              <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-inter text-base px-8">
+              <Button 
+                size="lg" 
+                className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-inter text-base px-8"
+                onClick={() => toast.info("Navigating to Men's Collection")}
+              >
                 SHOP MEN
               </Button>
             </div>

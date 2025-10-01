@@ -1,7 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useCart } from "@/hooks/useCart";
+import { toast } from "sonner";
 
 const ProductsSection = () => {
+  const { addItem } = useCart();
+
+  const handleAddToCart = (product: typeof products[0]) => {
+    addItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+    });
+    toast.success(`${product.name} added to cart!`);
+  };
+
   const products = [
     {
       id: 1,
@@ -81,7 +94,10 @@ const ProductsSection = () => {
                     <span className="text-sm text-muted-foreground font-inter">{product.size}</span>
                   </div>
                   
-                  <Button className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground font-inter">
+                  <Button 
+                    className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground font-inter"
+                    onClick={() => handleAddToCart(product)}
+                  >
                     Add to Cart
                   </Button>
                 </div>
@@ -91,7 +107,12 @@ const ProductsSection = () => {
         </div>
         
         <div className="text-center">
-          <Button size="lg" variant="outline" className="font-inter">
+          <Button 
+            size="lg" 
+            variant="outline" 
+            className="font-inter"
+            onClick={() => toast.info("Loading all fragrances...")}
+          >
             View All Fragrances
           </Button>
         </div>

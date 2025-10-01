@@ -1,8 +1,30 @@
-import { ShoppingCart, Search, User, Menu } from "lucide-react";
+import { ShoppingCart, Search, User, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useCart } from "@/hooks/useCart";
+import { useState } from "react";
+import { toast } from "sonner";
 
 const Header = () => {
+  const { getTotalItems } = useCart();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      toast.info(`Searching for: ${searchQuery}`);
+    }
+  };
+
+  const navLinks = [
+    { label: "MEN", href: "#men" },
+    { label: "WOMEN", href: "#women" },
+    { label: "UNISEX", href: "#unisex" },
+    { label: "GIFT SETS", href: "#gifts" },
+    { label: "NEW", href: "#new" }
+  ];
+
   return (
     <>
       {/* Announcement Bar */}
@@ -17,9 +39,30 @@ const Header = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between py-4">
             {/* Mobile Menu */}
-            <Button variant="ghost" size="icon" className="lg:hidden">
-              <Menu className="h-5 w-5" />
-            </Button>
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="lg:hidden">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="bg-primary text-primary-foreground">
+                <nav className="flex flex-col gap-6 mt-8">
+                  {navLinks.map((link) => (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        toast.info(`Navigating to ${link.label}`);
+                      }}
+                      className="text-lg font-inter hover:text-accent transition-colors"
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                </nav>
+              </SheetContent>
+            </Sheet>
             
             {/* Logo */}
             <div className="flex-1 lg:flex-none text-center lg:text-left">
@@ -31,26 +74,50 @@ const Header = () => {
             
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-8 flex-1 justify-center">
-              <a href="#" className="text-sm font-inter hover:text-accent transition-colors">MEN</a>
-              <a href="#" className="text-sm font-inter hover:text-accent transition-colors">WOMEN</a>
-              <a href="#" className="text-sm font-inter hover:text-accent transition-colors">UNISEX</a>
-              <a href="#" className="text-sm font-inter hover:text-accent transition-colors">GIFT SETS</a>
-              <a href="#" className="text-sm font-inter hover:text-accent transition-colors">NEW</a>
+              {navLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    toast.info(`Navigating to ${link.label}`);
+                  }}
+                  className="text-sm font-inter hover:text-accent transition-colors"
+                >
+                  {link.label}
+                </a>
+              ))}
             </nav>
             
             {/* Actions */}
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="icon" className="hidden lg:flex">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="hidden lg:flex"
+                onClick={handleSearch}
+              >
                 <Search className="h-5 w-5" />
               </Button>
-              <Button variant="ghost" size="icon">
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => toast.info("Account features coming soon!")}
+              >
                 <User className="h-5 w-5" />
               </Button>
-              <Button variant="ghost" size="icon" className="relative">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="relative"
+                onClick={() => toast.info("Cart preview coming soon!")}
+              >
                 <ShoppingCart className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 bg-accent text-foreground rounded-full w-5 h-5 text-xs flex items-center justify-center font-medium">
-                  0
-                </span>
+                {getTotalItems() > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-accent text-foreground rounded-full w-5 h-5 text-xs flex items-center justify-center font-medium">
+                    {getTotalItems()}
+                  </span>
+                )}
               </Button>
             </div>
           </div>
@@ -62,6 +129,9 @@ const Header = () => {
               <Input 
                 placeholder="Search by perfume, brand, or more..." 
                 className="pl-10 bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/60"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               />
             </div>
           </div>
